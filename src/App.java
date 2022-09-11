@@ -1,4 +1,6 @@
-import java.sql.Array;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class App {
@@ -97,6 +99,43 @@ public class App {
         }
     }
 
+    public static void stringToFile(String nomeArquivo, String texto) throws IOException {
+        File f = new File(nomeArquivo);
+        if (f.createNewFile()) {
+            System.out.println("arquivo criado: " + f.getName());
+        }
+
+        try {
+            FileWriter myWriter = new FileWriter(f.getName());
+            myWriter.write(texto);
+            myWriter.close();
+        }
+        catch(IOException  e){
+            e.printStackTrace();
+        }
+
+    }
+    public static ArrayList<Long> calculaTempoOrdenacao(String metodo, int[] vetor, int qtd_vezes){
+        long start;
+        long end;
+        ArrayList<Long> tempos = new ArrayList<Long>();
+
+        for (int i = 0; i < qtd_vezes; i++) {
+            int[] vClone = vetor.clone();
+            start = System.nanoTime();
+            if (metodo.equals("BubbleSort")){
+                bolha(vClone);
+            } else  {
+                quicksort(vClone,0, vClone.length - 1);
+            }
+
+            end = System.nanoTime();
+            tempos.add(end - start);
+        }
+
+        return tempos;
+    }
+
     /**
      * Escreva aqui no método principal sua automação do teste, de acordo com as especificações do exercício.
      * @param args
@@ -110,56 +149,46 @@ public class App {
     int[] vet4 = geraVetor(TAM4, false);
     int[][] vetores = {vet1,vet2,vet3,vet4};
 
-    // <MetodoOrd, HashMap<vetor.lenght, tempo>>
-    HashMap<String, HashMap<Integer, ArrayList<Long>>> results = new HashMap<String, HashMap<Integer, ArrayList<Long>>>();
+    // <Tamanho, HashMap<Metodo, tempo>>
+    HashMap<Integer, HashMap<String, ArrayList<Long>>> results = new HashMap<Integer, HashMap<String, ArrayList<Long>>>();
 
     long start;
     long end;
     long totalTime;
 
-    HashMap<Integer,ArrayList<Long>> resParcialBolha = new HashMap<Integer,ArrayList<Long>>();
-    HashMap<Integer,ArrayList<Long>> resParcialQuick = new HashMap<Integer,ArrayList<Long>>();
-
-    String metodo = new String();
-
-                                 //<vetor.lenght, tempoGasto>>
-    results.put("Bolha", new HashMap<Integer,ArrayList<Long>>());
-    results.put("Quicksort", new HashMap<Integer,ArrayList<Long>>());
-    ArrayList<Long> tempos = new ArrayList<Long>();
     for (int j = 0; j < 4; j++) {
         int [] v = vetores[j];
-
-        tempos = new ArrayList<Long>();
-
-        for (int i = 0; i < QTD_VEZES; i++) {
-            int[] vClone = v.clone();
-            start = System.nanoTime();
-            bolha(vClone);
-            end = System.nanoTime();
-            totalTime = end - start;
-            tempos.add(totalTime);
-        }
-        resParcialBolha.put(v.length, tempos);
-
-
-        tempos = new ArrayList<Long>();
-
-        for (int i = 0; i < QTD_VEZES; i++) {
-            int[] vClone = v.clone();
-
-            start = System.nanoTime();
-            quicksort(vClone, 0, v.length);
-            end = System.nanoTime();
-            totalTime = end - start;
-
-        }
-        resParcialBolha.put(v.length, tempos);
+        ArrayList<Long> tempoBubble = calculaTempoOrdenacao("BubbleSort",v, QTD_VEZES);
+        ArrayList<Long> tempoQuick  = calculaTempoOrdenacao("QuickSort" ,v, QTD_VEZES);
+        HashMap<String, ArrayList<Long>> res = new HashMap<String, ArrayList<Long>>();
+        res.put("BubbleSort", tempoBubble);
+        res.put("QuickSort", tempoQuick);
+        results.put(v.length, res);
 
     }
 
-    results.put("BubbleSort", resParcialBolha);
-    results.put("QuickSort", resParcialQuick);
+    StringBuilder strResults = new StringBuilder();
+    strResults.append("TamanhoVetor,Metodo,MediaTempo(ns)\n");
+    for (Integer k : results.keySet()){
+        String tam = Integer.toString(k);
+
+        for (String metodo: results.get(k).keySet()){
+            double mediaTempo = results.get(k).get(metodo)
+                    .stream()
+                    .mapToLong(Long::longValue)
+                    .average()
+                    .getAsDouble();
+
+            strResults.append(tam + "," + metodo + "," + mediaTempo + "\n");
+        }
+    }
+
+    System.out.println(strResults);
+    stringToFile("resultados.csv", strResults.toString());
+    System.out.println("Resultado exportado para: resultados.csv");
+
     long t = System.nanoTime() - s;
+
     System.out.println("Total runtime: " + t);
 
 
