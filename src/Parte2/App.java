@@ -1,3 +1,4 @@
+package Parte2;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -5,10 +6,8 @@ import java.util.*;
 
 public class App {
     private static final int QTD_VEZES = 50;
-    private static final int TAM1 = 62500;
-    private static final int TAM2 = 125000;
-    private static final int TAM3 = 250000;
-    private static final int TAM4 = 375000;
+    private static final int TAM = 375000;
+
 
 
     /**
@@ -143,46 +142,35 @@ public class App {
      */
     public static void main(String[] args) throws Exception {
     long s = System.nanoTime();
-    int[] vet1 = geraVetor(TAM1, false);
-    int[] vet2 = geraVetor(TAM2, false);
-    int[] vet3 = geraVetor(TAM3, false);
-    int[] vet4 = geraVetor(TAM4, false);
-    int[][] vetores = {vet1,vet2,vet3,vet4};
+    int[] vetOrdenado = geraVetor(TAM, true);
+    int[] vetAleatorio = geraVetor(TAM, false);
 
-    // <Tamanho, HashMap<Metodo, tempo>>
-    HashMap<Integer, HashMap<String, ArrayList<Long>>> results = new HashMap<Integer, HashMap<String, ArrayList<Long>>>();
+    int[][] vetores = {vetOrdenado,vetAleatorio};
 
+    // HashMap<Ordenado?, tempos>
+    HashMap<Boolean, ArrayList<Long>> results = new HashMap<Boolean, ArrayList<Long>>();
 
-
-    for (int j = 0; j < 4; j++) {
-        int [] v = vetores[j];
-        ArrayList<Long> tempoBubble = calculaTempoOrdenacao("BubbleSort",v, QTD_VEZES);
-        ArrayList<Long> tempoQuick  = calculaTempoOrdenacao("QuickSort" ,v, QTD_VEZES);
-        HashMap<String, ArrayList<Long>> res = new HashMap<String, ArrayList<Long>>();
-        res.put("BubbleSort", tempoBubble);
-        res.put("QuickSort", tempoQuick);
-        results.put(v.length, res);
-
-    }
+    ArrayList<Long> temposOrdenado  = calculaTempoOrdenacao("QuickSort" ,vetores[0], QTD_VEZES);
+    ArrayList<Long> temposAleatorio  = calculaTempoOrdenacao("QuickSort" ,vetores[1], QTD_VEZES);
+    results.put(true, temposOrdenado);
+    results.put(false, temposAleatorio);
 
     StringBuilder strResults = new StringBuilder();
-    strResults.append("TamanhoVetor,Metodo,MediaTempo(ns)\n");
-    for (Integer k : results.keySet()){
-        String tam = Integer.toString(k);
 
-        for (String metodo: results.get(k).keySet()){
-            double mediaTempo = results.get(k).get(metodo)
-                    .stream()
-                    .mapToLong(Long::longValue)
-                    .average()
-                    .getAsDouble();
+    strResults.append("Ordenado?, MediaTempo(ns)\n");
+    for (Boolean k : results.keySet()){
 
-            strResults.append(tam + "," + metodo + "," + mediaTempo + "\n");
-        }
+        double mediaTempo = results.get(k)
+                .stream()
+                .mapToLong(Long::longValue)
+                .average()
+                .getAsDouble();
+
+        strResults.append(k + "," + mediaTempo + "\n");
     }
 
     System.out.println(strResults);
-    stringToFile("resultados.csv", strResults.toString());
+    stringToFile("resultadosParte2.csv", strResults.toString());
     System.out.println("Resultado exportado para: resultados.csv");
 
     long t = System.nanoTime() - s;
