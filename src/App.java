@@ -152,9 +152,6 @@ public class App {
     // <Tamanho, HashMap<Metodo, tempo>>
     HashMap<Integer, HashMap<String, ArrayList<Long>>> results = new HashMap<Integer, HashMap<String, ArrayList<Long>>>();
 
-    long start;
-    long end;
-    long totalTime;
 
     for (int j = 0; j < 4; j++) {
         int [] v = vetores[j];
