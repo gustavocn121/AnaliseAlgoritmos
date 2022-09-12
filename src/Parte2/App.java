@@ -177,7 +177,7 @@ public class App {
 
     long t = System.nanoTime() - s;
 
-    System.out.println("Total runtime: " + TimeUnit.SECONDS.convert(t, TimeUnit.NANOSECONDS));
+    System.out.println("Total runtime: " + t);
     
 
 
