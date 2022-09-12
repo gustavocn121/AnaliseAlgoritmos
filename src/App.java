@@ -153,6 +153,7 @@ public class App {
     HashMap<Integer, HashMap<String, ArrayList<Long>>> results = new HashMap<Integer, HashMap<String, ArrayList<Long>>>();
 
 
+
     for (int j = 0; j < 4; j++) {
         int [] v = vetores[j];
         ArrayList<Long> tempoBubble = calculaTempoOrdenacao("BubbleSort",v, QTD_VEZES);
