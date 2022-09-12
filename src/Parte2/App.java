@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class App {
     private static final int QTD_VEZES = 50;
@@ -70,7 +71,8 @@ public class App {
      */
     static public int particao(int[] dados, int inicio, int fim){
         int posicao = inicio-1;
-        int pivot = dados[fim];
+        Random sorteio = new Random();
+        int pivot = dados[sorteio.nextInt(dados.length)];
         for (int i = inicio; i < fim; i++) {
             if(dados[i]<pivot){
                 posicao++;
@@ -175,7 +177,8 @@ public class App {
 
     long t = System.nanoTime() - s;
 
-    System.out.println("Total runtime: " + t);
+    System.out.println("Total runtime: " + TimeUnit.SECONDS.convert(t, TimeUnit.NANOSECONDS));
+    
 
 
     }
