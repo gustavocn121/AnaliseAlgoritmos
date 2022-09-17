@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class App {
     private static final int QTD_VEZES = 50;
@@ -71,8 +70,7 @@ public class App {
      */
     static public int particao(int[] dados, int inicio, int fim){
         int posicao = inicio-1;
-        Random sorteio = new Random();
-        int pivot = dados[sorteio.nextInt(dados.length)];
+        int pivot = dados[fim];
         for (int i = inicio; i < fim; i++) {
             if(dados[i]<pivot){
                 posicao++;
@@ -152,8 +150,9 @@ public class App {
     // HashMap<Ordenado?, tempos>
     HashMap<Boolean, ArrayList<Long>> results = new HashMap<Boolean, ArrayList<Long>>();
 
-    ArrayList<Long> temposOrdenado  = calculaTempoOrdenacao("QuickSort" ,vetores[0], QTD_VEZES);
     ArrayList<Long> temposAleatorio  = calculaTempoOrdenacao("QuickSort" ,vetores[1], QTD_VEZES);
+    ArrayList<Long> temposOrdenado  = calculaTempoOrdenacao("QuickSort" ,vetores[0], QTD_VEZES);
+
     results.put(true, temposOrdenado);
     results.put(false, temposAleatorio);
 
